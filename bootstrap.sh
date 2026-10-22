@@ -26,10 +26,12 @@ else
 fi
 
 # 2. static ffmpeg/ffprobe on the volume (the image has none)
-if [ ! -x bin/ffmpeg ]; then
+if [ ! -x bin/ffmpeg ] || [ ! -x bin/ffprobe ]; then
   log "fetching static ffmpeg"
   mkdir -p bin && curl -sL https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz \
-    | tar -xJ --strip-components=1 -C bin --wildcards '*/ffmpeg' '*/ffprobe' || log "WARN: ffmpeg download failed"
+    | tar -xJ --no-same-owner --no-same-permissions --strip-components=1 -C bin --wildcards '*/ffmpeg' '*/ffprobe'
+  chmod +x bin/ffmpeg bin/ffprobe 2>/dev/null
+  [ -x bin/ffmpeg ] && log "ffmpeg ok: $(bin/ffmpeg -version | head -1)" || log "WARN: ffmpeg unavailable; handler will skip local re-encode"
 fi
 export PATH="$V/bin:$PATH"
 

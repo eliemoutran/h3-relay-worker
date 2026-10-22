@@ -95,8 +95,16 @@ def media_bytes(value):
 
 
 def to_24fps(src, dst):
-    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", src, "-r", "24", "-c:v", "libx264", "-crf", "18",
-                    "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "128k", dst], check=True)
+    """Re-encode to 24 fps H.264 when ffmpeg is available; otherwise copy as-is (the Relay
+    prepare node normalizes the frame rate itself, this just makes the input predictable)."""
+    if shutil.which("ffmpeg"):
+        try:
+            subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", src, "-r", "24", "-c:v", "libx264", "-crf", "18",
+                            "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "128k", dst], check=True)
+            return dst
+        except subprocess.CalledProcessError as e:
+            log(f"ffmpeg re-encode failed ({e}); using the source as uploaded")
+    shutil.copy(src, dst)
     return dst
 
 
