@@ -17,6 +17,9 @@ log() { echo "[bootstrap $(date -u +%H:%M:%S)] $*"; }
 
 mkdir -p "$V" && cd "$V"
 log "start (volume root $V)"
+# one installer per volume: a second worker booting on the same volume waits here
+exec 9>"$V/.bootstrap.lock"
+if ! flock -n 9; then log "another worker is installing on this volume; waiting for it"; flock 9; log "lock acquired"; fi
 
 # 1. worker code, always refreshed so handler fixes land without a rebuild
 if [ -d worker/.git ]; then
