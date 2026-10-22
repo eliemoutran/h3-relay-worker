@@ -21,7 +21,7 @@ import time
 import urllib.error
 import urllib.request
 
-ENDPOINT_ID = os.environ.get("H3_ENDPOINT_ID", "ENDPOINT_ID_PLACEHOLDER")
+ENDPOINT_ID = os.environ.get("H3_ENDPOINT_ID", "opxvej0f3ciwbb")
 RATE_USD_PER_HOUR = float(os.environ.get("H3_RATE_USD_PER_HOUR", "3.49"))  # BLACKWELL_96 serverless flex rate
 RUN_LIMIT = 10 * 1024 * 1024  # /run payload limit
 UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) swap_sls/1.0"}
